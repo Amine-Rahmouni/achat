@@ -10,13 +10,11 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/Amine-Rahmouni/achat.git'
             }
         }
-
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
             }
         }
-
         stage('Test') {
             steps {
                 sh 'mvn test'
@@ -27,20 +25,13 @@ pipeline {
                 }
             }
         }
-
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        mvn sonar:sonar \
-                          -Dsonar.projectKey=achat \
-                          -Dsonar.host.url=http://localhost:9000 \
-                          -Dsonar.login=$SONAR_AUTH_TOKEN
-                    '''
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=achat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_AUTH_TOKEN'
                 }
             }
         }
-
         stage('Quality Gate') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
@@ -48,14 +39,12 @@ pipeline {
                 }
             }
         }
-
         stage('Publish to Nexus') {
             steps {
                 sh 'mvn deploy -DskipTests'
             }
         }
     }
-
     post {
         success {
             echo 'Pipeline completed successfully!'
