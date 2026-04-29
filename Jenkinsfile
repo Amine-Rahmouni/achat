@@ -1,13 +1,10 @@
 pipeline {
     agent any
-
     tools {
         maven 'Maven3'
         jdk 'JDK17'
     }
-
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/Amine-Rahmouni/achat.git'
@@ -16,7 +13,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
@@ -24,6 +21,47 @@ pipeline {
             steps {
                 sh 'mvn test'
             }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=achat \
+                          -Dsonar.host.url=http://localhost:9000 \
+                          -Dsonar.login=$SONAR_AUTH_TOKEN
+                    '''
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Publish to Nexus') {
+            steps {
+                sh 'mvn deploy -DskipTests'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
