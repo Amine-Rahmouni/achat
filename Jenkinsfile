@@ -15,16 +15,7 @@ pipeline {
                 sh 'mvn clean package -DskipTests'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-                }
-            }
-        }
+      
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
@@ -47,6 +38,16 @@ pipeline {
                 sh 'docker stop achat-app || true'
                 sh 'docker rm achat-app || true'
                 sh 'docker run -d --name achat-app -p 8082:8080 achat-app:1.1'
+            }
+        }
+          stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                }
             }
         }
     }
