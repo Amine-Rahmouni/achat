@@ -28,7 +28,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=achat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_AUTH_TOKEN'
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=achat -Dsonar.host.url=http://localhost:9001 -Dsonar.login=$SONAR_AUTH_TOKEN'
                 }
             }
         }
