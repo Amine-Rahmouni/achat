@@ -42,6 +42,13 @@ pipeline {
                 sh 'docker build -t achat-app:1.1 .'
             }
         }
+        stage('Docker Run') {
+            steps {
+                sh 'docker stop achat-app || true'
+                sh 'docker rm achat-app || true'
+                sh 'docker run -d --name achat-app -p 8082:8080 achat-app:1.1'
+            }
+        }
     }
     post {
         success {
