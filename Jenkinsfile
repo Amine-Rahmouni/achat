@@ -37,6 +37,11 @@ pipeline {
                 sh 'mvn deploy -DskipTests'
             }
         }
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t achat-app:1.1 .'
+            }
+        }
     }
     post {
         success {
