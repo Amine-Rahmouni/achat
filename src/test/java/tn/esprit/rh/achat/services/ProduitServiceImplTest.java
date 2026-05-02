@@ -14,8 +14,8 @@ public class ProduitServiceImplTest {
     void setUp() {
         produit = new Produit();
         produit.setLibelleProduit("Produit Test");
-        produit.setPrixUnitaire(100f);
-        produit.setQteStock(10);
+        produit.setCodeProduit("P001");
+        produit.setPrix(100f);
     }
 
     @Test
@@ -24,13 +24,13 @@ public class ProduitServiceImplTest {
     }
 
     @Test
-    void testProduitPrix() {
-        assertEquals(100f, produit.getPrixUnitaire());
+    void testProduitCode() {
+        assertEquals("P001", produit.getCodeProduit());
     }
 
     @Test
-    void testProduitQteStock() {
-        assertEquals(10, produit.getQteStock());
+    void testProduitPrix() {
+        assertEquals(100f, produit.getPrix());
     }
 
     @Test
