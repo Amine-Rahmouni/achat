@@ -35,7 +35,12 @@ pipeline {
         }
         stage('Trivy Scan') {
             steps {
-                sh 'trivy image --exit-code 0 --severity HIGH,CRITICAL achat-app:1.1'
+                sh '''
+                  trivy image \
+                  --timeout 15m \
+                  --severity HIGH,CRITICAL \
+                  achat-app:1.1
+                '''
             }
         }
         stage('Docker Run') {
