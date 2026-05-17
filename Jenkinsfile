@@ -45,6 +45,19 @@ pipeline {
                 sh 'docker run -d --name achat-app -p 8082:8080 achat-app:1.1'
             }
         }
+        stage('OWASP ZAP Scan') {
+            steps {
+                sh '''
+                    docker run --rm \
+                    -v $(pwd):/zap/wrk \
+                    ghcr.io/zaproxy/zaproxy:stable \
+                    zap-baseline.py \
+                    -t http://172.17.0.1:8082/SpringMVC \
+                    -r zap-report.html \
+                    -I
+                '''
+            }
+        }
           stage('Test') {
             steps {
                 sh 'mvn test'
